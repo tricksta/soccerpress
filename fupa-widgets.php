@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: SoccerPress
-Description: SoccerPress ist ein Plugin für deutsche Fußballvereine um Ergebnisse der letzten Spiele anzuzeigen.
-Version: 1.0
+Plugin Name: FuPa Widgets
+Description: Mit diesem Plugin können Sie Live Tabellen von FuPa einfach auf Ihre Webseite über Shortcodes einbinden.
 Author: Bogdan Schreiber
 Author URI: https://devcraft.de
+Version: 1.0
 */
 
 /**
@@ -15,11 +15,11 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Main SoccerPress Class
+ * Main FuPaWidgets Class
  * 
- * @class SoccerPress
+ * @class FuPaWidgets
  */
-class SoccerPress
+class FuPaWidgets
 {
     /**
      * Constructor
@@ -28,6 +28,7 @@ class SoccerPress
     {
         add_action('init', array($this, 'init'));
         add_action('admin_enqueue_scripts', array($this, 'load_admin_scripts'));
+        add_action('wp_enqueue_scripts', array($this, 'load_frontend_scripts'));
 
         // Include required files
         $this->includes();
@@ -38,7 +39,11 @@ class SoccerPress
      */
     public function init()
     {
-        new Admin();   // Admin class
+        // Shortcodes
+        require_once('includes/shortcodes.php');
+
+        // Register post types
+        require_once('includes/post-types/teams.php');
     }
 
     /**
@@ -52,11 +57,17 @@ class SoccerPress
     /**
      * Register styles and scripts
      */
+    public function load_frontend_scripts()
+    {
+        // Enqueue styles
+        wp_enqueue_style('styles', plugins_url('assets/css/styles.css', __FILE__), array(), '1.0.0', false);
+    }
+
     public function load_admin_scripts()
     {
         // Enqueue styles
-        wp_enqueue_style('soccerpress', plugins_url('assets/css/soccerpress.css', __FILE__), array(), '1.0.0', false);
         wp_enqueue_style('bootstrap-css', plugins_url('assets/css/bootstrap.min.css', __FILE__), array(), '4.3.1', false);
+
 
         // Enqueue scripts
         wp_register_script('bootstrap-js', plugins_url('assets/js/bootstrap.min.js', __FILE__), array(), '4.3.1', false);
@@ -76,4 +87,4 @@ class SoccerPress
 /**
  * Begins execution of the plugin.
  */
-$plugin = new SoccerPress();
+$plugin = new FuPaWidgets();
